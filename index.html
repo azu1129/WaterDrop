@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>audio_mokumoku</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="greeting"></div>
+
+  <button onclick="Play1();">水滴音１</button>
+  <button onclick="Play2();">水滴音２</button>
+  <button onclick="Play3();">水滴音1&2</button>
+  
+  
+  <script type="text/javascript">
+    var audioctx = new AudioContext();
+    
+    // 水音クラス
+    var WaterDrop = (function() {
+
+      //var FOOFOO = 777; // クラス内定数
+    
+      // constructor
+      var waterDrop = function(audioctx) {
+        this.audioctx = audioctx;
+        this.osc = audioctx.createOscillator();
+        this.gain = audioctx.createGain();
+        
+        this.osc.connect(this.gain);
+        this.gain.connect(audioctx.destination);
+      };
+    
+      var p = waterDrop.prototype;
+    
+      p.run = function(startFreq, endFreq, startGain, sec) {
+        this.osc.type = "sine";  // sin波
+        //this.osc.frequency.value = 600;
+        
+        var curTime = this.audioctx.currentTime;
+        var endTime = curTime + sec;
+        
+        // 音量を指数関数的に減衰
+        this.gain.gain.setValueAtTime(startGain, curTime);
+        this.gain.gain.exponentialRampToValueAtTime(0.00001, endTime);
+        
+        // 周波数を指数関数的に減衰
+        this.osc.frequency.setValueAtTime(startFreq, curTime);
+        this.osc.frequency.exponentialRampToValueAtTime(endFreq, endTime);
+        
+        this.osc.start();
+      };
+    
+      return waterDrop;
+    })();
+    
+    var drop1 = new WaterDrop(audioctx);
+    var drop2 = new WaterDrop(audioctx);
+    //var freq = audioctx.createFrequency();
+    
+    const Play1 = () => {
+      drop1.run(2000, 3000, 1.0, 0.2);
+    }
+    const Play2 = () => {
+      drop2.run(3000, 5000, 1.0, 0.12);
+    }
+    
+    var timerId = 0;
+    
+    function delayRun()
+    {
+      clearTimeout(timerId);
+      timerId = setTimeout( "drop2.run(3000, 5000, 0.3, 0.10)", 60); // 60ms遅れで鳴らす
+    }
+    
+    const Play3 = () => {
+      delayRun();
+      drop1.run(2000, 3000, 1.0, 0.2);
+    }
+  </script>
+
+  <script src="main.js"></script> 
+</body>
+</html>
