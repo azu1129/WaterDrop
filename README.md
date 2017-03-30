@@ -1,5 +1,5 @@
 # WaterDrop
-This script generate water drop sound by WebAudio API.
+This script generate water drop sound using WebAudio API.
 
 # 説明
 Web Audio API 初心者向けハンズオン( https://connpass.com/event/41470/ )の成果です。本来は気泡のサイズ等の物理パラメータから音生成につなげるのですが、今回は1時間半のもくもくタイムで作ったのでおおざっぱに指数関数的に減衰させました。
